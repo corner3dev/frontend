@@ -66,7 +66,7 @@ const TxFHEOperations = ({ txQuery }: Props) => {
     <DataListDisplay
       isError={ isError }
       itemsNum={ displayData?.items?.length ?? 0 }
-      emptyText="There are no FHE Operations for this transaction."
+      emptyText="There are no FHE operations for this transaction."
     >
       { content }
     </DataListDisplay>
