@@ -34,6 +34,7 @@ type Props = {
   chainData?: ClusterChainConfig;
   translationIsLoading?: boolean;
   translationData?: NovesDescribeTxsResponse;
+  isMobile?: boolean;
 };
 
 const TxsTableItem = ({
@@ -46,15 +47,16 @@ const TxsTableItem = ({
   chainData,
   translationIsLoading,
   translationData,
+  isMobile,
 }: Props) => {
   const dataTo = tx.to ? tx.to : tx.created_contract;
 
-  const protocolTag = tx.to?.metadata?.tags?.find(tag => tag.tagType === 'protocol');
+  const protocolTag = tx.to?.hash !== currentAddress && tx.to?.metadata?.tags?.find(tag => tag.tagType === 'protocol');
 
   return (
     <TableRow key={ tx.hash } animation={ animation }>
       <TableCell textAlign="center">
-        <TxAdditionalInfo tx={ tx } isLoading={ isLoading }/>
+        <TxAdditionalInfo tx={ tx } isMobile={ isMobile } isLoading={ isLoading }/>
       </TableCell>
       { chainData && (
         <TableCell>
@@ -90,18 +92,18 @@ const TxsTableItem = ({
           ) :
             <TxType types={ tx.transaction_types } isLoading={ isLoading }/>
           }
-          <TxStatus status={ tx.status } errorText={ tx.status === 'error' ? tx.result : undefined } isLoading={ isLoading }/>
+          { tx.status !== 'ok' && <TxStatus status={ tx.status } errorText={ tx.status === 'error' ? tx.result : undefined } isLoading={ isLoading }/> }
           <TxWatchListTags tx={ tx } isLoading={ isLoading }/>
         </VStack>
       </TableCell>
       <TableCell whiteSpace="nowrap">
-        <VStack alignItems="stretch">
+        <VStack alignItems="flex-start">
           { tx.method && (
             <Badge colorPalette={ tx.method === 'Multicall' ? 'teal' : 'gray' } loading={ isLoading } truncated>
               <span>{ tx.method }</span>
             </Badge>
           ) }
-          { protocolTag && <EntityTag data={ protocolTag } isLoading={ isLoading }/> }
+          { protocolTag && <EntityTag data={ protocolTag } isLoading={ isLoading } maxW="100%" noColors/> }
         </VStack>
       </TableCell>
       { showBlockInfo && (
